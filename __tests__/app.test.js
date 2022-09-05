@@ -104,9 +104,9 @@ describe("NC_Games API", () => {
     it("400: when inc_votes is invalid", () => {
       const reqBody = { inc_votes: "invalid_type" };
       return request(app)
-        .patch("/api/reviews/12345")
+        .patch("/api/reviews/1")
         .send(reqBody)
-        .expect(404)
+        .expect(400)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "bad request" });
         });

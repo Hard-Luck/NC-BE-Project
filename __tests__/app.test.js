@@ -106,7 +106,7 @@ describe("NC_Games API", () => {
       return request(app)
         .patch("/api/reviews/12345")
         .send(reqBody)
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "bad request" });
         });

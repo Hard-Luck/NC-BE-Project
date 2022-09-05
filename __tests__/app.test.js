@@ -5,7 +5,7 @@ const testData = require("../db/data/test-data/index");
 const db = require("../db/connection");
 
 beforeEach(() => seed(testData));
-afterAll(() => db.end);
+afterAll(() => db.end());
 
 describe("NC_Games API", () => {
   describe("GET /api/categories", () => {
@@ -14,6 +14,7 @@ describe("NC_Games API", () => {
         .get("/api/categories")
         .expect(200)
         .then(({ body }) => {
+          expect(typeof body).toBe("object");
           expect(body.categories.length > 0).toBe(true);
           body.categories.forEach((category) => {
             expect(category).toHaveProperty("slug", expect.any(String));
@@ -64,6 +65,7 @@ describe("NC_Games API", () => {
         .get("/api/users")
         .expect(200)
         .then(({ body }) => {
+          expect(typeof body).toBe("object");
           expect(body.users.length > 0).toBe(true);
           body.users.forEach((user) => {
             expect(user).toHaveProperty("username", expect.any(String));

@@ -59,6 +59,48 @@ describe("NC_Games API", () => {
         });
     });
   });
+  xdescribe("PATCH /api/reviews/:review_id", () => {
+    it("200: updates review and returns new review object", () => {
+      const reqBody = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.votes).toBe(11);
+        });
+    });
+    it("400: bad request, when review id is invalid", () => {
+      const reqBody = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/invalid")
+        .send(body)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("400: bad request when request body is incorrect", () => {
+      const reqBody = { invalid: 10 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(body)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("404: when review doesnt exist", () => {
+      const reqBody = { invalid: 10 };
+      return request(app)
+        .patch("/api/reviews/12345")
+        .send(body)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "review not found" });
+        });
+    });
+  });
   describe("GET /api/users", () => {
     it("200: Returns all category objects with username, name and avatar_url", () => {
       return request(app)

@@ -101,8 +101,18 @@ describe("NC_Games API", () => {
           expect(body).toEqual({ msg: "bad request" });
         });
     });
+    it("400: when inc_votes is invalid", () => {
+      const reqBody = { inc_votes: "invalid_type" };
+      return request(app)
+        .patch("/api/reviews/12345")
+        .send(reqBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
     it("404: when review doesnt exist", () => {
-      const reqBody = { invalid: 10 };
+      const reqBody = { inc_votes: 10 };
       return request(app)
         .patch("/api/reviews/12345")
         .send(reqBody)

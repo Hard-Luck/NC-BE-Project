@@ -29,7 +29,7 @@ describe("NC_Games API", () => {
         .expect(200)
         .then(({ body }) => {
           const { review } = body;
-          expect(review).toHaveProperty("review_id", expect.any(Number));
+          expect(review).toHaveProperty("review_id", 2);
           expect(review).toHaveProperty("title", expect.any(String));
           expect(review).toHaveProperty("review_body", expect.any(String));
           expect(review).toHaveProperty("designer", expect.any(String));
@@ -41,15 +41,15 @@ describe("NC_Games API", () => {
           expect(Date.parse(review.created_at)).not.toBeNaN();
         });
     });
-    it("400: bad request, when review id is valid but doesn't exist", () => {
+    it("404: bad request, when review id is valid but doesn't exist", () => {
       return request(app)
         .get("/api/reviews/10000000")
-        .expect(400)
+        .expect(404)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "review not found" });
         });
     });
-    it("400: bad request, when review id is valid but doesn't exist", () => {
+    it("400: bad request, when review id is invalid", () => {
       return request(app)
         .get("/api/reviews/invalid")
         .expect(400)

@@ -5,15 +5,16 @@ const testData = require("../db/data/test-data/index");
 const db = require("../db/connection");
 
 beforeEach(() => seed(testData));
-afterAll(() => db.end);
+afterAll(() => db.end());
 
 describe("NC_Games API", () => {
-  describe("GET /api/Categories", () => {
+  describe("GET /api/categories", () => {
     it("200: Returns all category objects with slug and description", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
         .then(({ body }) => {
+          expect(typeof body).toBe("object");
           expect(body.categories.length > 0).toBe(true);
           body.categories.forEach((category) => {
             expect(category).toHaveProperty("slug", expect.any(String));
@@ -55,6 +56,22 @@ describe("NC_Games API", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+  });
+  describe("GET /api/users", () => {
+    it("200: Returns all category objects with username, name and avatar_url", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe("object");
+          expect(body.users).toHaveLength(4);
+          body.users.forEach((user) => {
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+          });
         });
     });
   });

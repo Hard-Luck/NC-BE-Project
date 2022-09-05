@@ -59,7 +59,7 @@ describe("NC_Games API", () => {
         });
     });
   });
-  xdescribe("PATCH /api/reviews/:review_id", () => {
+  describe("PATCH /api/reviews/:review_id", () => {
     it("200: updates review and returns new review object", () => {
       const reqBody = { inc_votes: 10 };
       return request(app)
@@ -67,14 +67,25 @@ describe("NC_Games API", () => {
         .send(reqBody)
         .expect(200)
         .then(({ body }) => {
-          expect(body.votes).toBe(11);
+          expect(body.review).toEqual({
+            review_id: 1,
+            title: "Agricola",
+            designer: "Uwe Rosenberg",
+            owner: "mallionaire",
+            review_img_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            review_body: "Farmyard fun!",
+            category: "euro game",
+            created_at: "2021-01-18T10:00:20.514Z",
+            votes: 11,
+          });
         });
     });
     it("400: bad request, when review id is invalid", () => {
       const reqBody = { inc_votes: 10 };
       return request(app)
         .patch("/api/reviews/invalid")
-        .send(body)
+        .send(reqBody)
         .expect(400)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "bad request" });
@@ -84,7 +95,7 @@ describe("NC_Games API", () => {
       const reqBody = { invalid: 10 };
       return request(app)
         .patch("/api/reviews/1")
-        .send(body)
+        .send(reqBody)
         .expect(400)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "bad request" });
@@ -94,8 +105,8 @@ describe("NC_Games API", () => {
       const reqBody = { invalid: 10 };
       return request(app)
         .patch("/api/reviews/12345")
-        .send(body)
-        .expect(400)
+        .send(reqBody)
+        .expect(404)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "review not found" });
         });

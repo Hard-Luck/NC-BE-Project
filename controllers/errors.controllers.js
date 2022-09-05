@@ -4,7 +4,7 @@ exports.handleUncaughtError = (err, req, res, next) => {
 };
 
 exports.handlePostgresError = (err, req, res, next) => {
-  const pgErrorCodes = ["22P02"];
+  const pgErrorCodes = ["22P02", "23502"];
   if (pgErrorCodes.includes(err.code)) {
     res.status(400).send({ msg: "bad request" });
   } else {

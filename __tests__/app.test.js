@@ -66,7 +66,7 @@ describe("NC_Games API", () => {
         .expect(200)
         .then(({ body }) => {
           expect(typeof body).toBe("object");
-          expect(body.users.length === 4).toBe(true);
+          expect(body.users).toHaveLength(4);
           body.users.forEach((user) => {
             expect(user).toHaveProperty("username", expect.any(String));
             expect(user).toHaveProperty("name", expect.any(String));

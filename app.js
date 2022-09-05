@@ -1,6 +1,13 @@
 const express = require("express");
-const { getCategories } = require("./controllers/categories.controllers");
-const { handleUncaughtError } = require("./controllers/errors.controllers");
+const {
+  getCategories,
+  getReview,
+} = require("./controllers/categories.controllers");
+const {
+  handleUncaughtError,
+  handleCustomError,
+  handlePostgresError,
+} = require("./controllers/errors.controllers");
 
 const app = express();
 
@@ -8,6 +15,10 @@ app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
+app.get("/api/reviews/:review_id", getReview);
+
+app.use(handleCustomError);
+app.use(handlePostgresError);
 app.use(handleUncaughtError);
 
 module.exports = app;

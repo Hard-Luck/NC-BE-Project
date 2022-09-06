@@ -5,7 +5,11 @@ const {
   handleCustomError,
   handlePostgresError,
 } = require("./controllers/errors.controllers");
-const { getReview, patchReview } = require("./controllers/reviews.controllers");
+const {
+  getReview,
+  getReviews,
+  patchReview,
+} = require("./controllers/reviews.controllers");
 const { getUsers } = require("./controllers/users.controllers");
 
 const app = express();
@@ -15,6 +19,7 @@ app.get("/api/categories", getCategories);
 
 app.get("/api/users", getUsers);
 
+app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReview);
 app.patch("/api/reviews/:review_id", patchReview);
 

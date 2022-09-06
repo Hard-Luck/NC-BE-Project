@@ -13,7 +13,7 @@ exports.getReview = (req, res, next) => {
 };
 
 exports.getReviews = (req, res, next) => {
-  getAllReviews().then((reviews) => {
+  getAllReviews(req.query.category).then((reviews) => {
     res.status(200).send({ reviews });
   });
 };

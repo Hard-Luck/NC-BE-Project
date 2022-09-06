@@ -57,10 +57,8 @@ exports.updateVotes = (review_id, votes) => {
     });
 };
 
-exports.getAllReviews = () => {
-  return db
-    .query(
-      `
+exports.getAllReviews = (category) => {
+  let query = `
   SELECT 
     owner,
     title,
@@ -77,11 +75,19 @@ exports.getAllReviews = () => {
     comments 
   ON 
     reviews.review_id = comments.review_id
+
+    `;
+  const whereQuery = ` WHERE category = $1 `;
+  const orderGroupQuery = `   
   GROUP BY
     reviews.review_id
   ORDER BY
-    reviews.created_at DESC
-    `
-    )
-    .then(({ rows }) => rows);
+    reviews.created_at DESC; `;
+  const queryParams = [];
+  if (category !== undefined) {
+    query += whereQuery;
+    queryParams.push(category);
+  }
+  query += orderGroupQuery;
+  return db.query(query, queryParams).then(({ rows }) => rows);
 };

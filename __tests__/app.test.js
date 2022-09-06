@@ -163,5 +163,36 @@ describe("NC_Games API", () => {
           expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
+    it("200: returns array with all revies of the category with category matches are found", () => {
+      return request(app)
+        .get("/api/reviews?category=social%20deduction")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toHaveLength(11);
+          reviews.forEach((review) => {
+            expect(review).toHaveProperty("owner", expect.any(String));
+            expect(review).toHaveProperty("title", expect.any(String));
+            expect(review).toHaveProperty("review_id", expect.any(Number));
+            expect(review).toHaveProperty("category", expect.any(String));
+            expect(review).toHaveProperty("review_img_url", expect.any(String));
+            expect(review).toHaveProperty("votes", expect.any(Number));
+            expect(review).toHaveProperty("designer", expect.any(String));
+            expect(review).toHaveProperty("comment_count", expect.any(Number));
+
+            expect(review).toHaveProperty("created_at", expect.any(String));
+            expect(Date.parse(review.created_at)).not.toBeNaN();
+          });
+          expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    it("200: returns empty array when category is in categories but no revies are returned", () => {
+      return request(app)
+        .get("/api/reviews?category=children%27s%20games")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toEqual([]);
+        });
+    });
   });
 });

@@ -247,4 +247,25 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe("POST /api/reviews/:review_id/comment", () => {
+    it("200: adds comment to a review", () => {
+      const commentBody = {
+        username: "mallionaire",
+        body: "this is a comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(commentBody)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toHaveProperty("body", commentBody.body);
+          expect(body.comment).toHaveProperty("author", commentBody.username);
+          expect(body.comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(body.comment).toHaveProperty("review_id", 1);
+          expect(body.comment).toHaveProperty("votes", 0);
+          expect(body.comment).toHaveProperty("created_at", expect.any(String));
+          expect(Date.parse(body.comment.created_at)).not.toBeNaN();
+        });
+    });
+  });
 });

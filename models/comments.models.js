@@ -34,7 +34,6 @@ exports.getCommentsForReview = (review_id) => {
       ]);
     })
     .then(([results, flag]) => {
-      console.log(results.rows);
       if (flag) {
         return results.rows;
       }
@@ -43,4 +42,18 @@ exports.getCommentsForReview = (review_id) => {
       }
       return Promise.reject({ status: 404, msg: "review not found" });
     });
+};
+
+exports.addCommentToReview = (review_id, { username, body }) => {
+  const query = `
+  INSERT INTO comments
+    (body, author, review_id)
+  VALUES
+   ($1, $2, $3)
+  RETURNING *;
+  `;
+
+  return db.query(query, [body, username, review_id]).then(({ rows }) => {
+    return rows[0];
+  });
 };

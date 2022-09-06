@@ -267,5 +267,32 @@ describe("NC_Games API", () => {
           expect(Date.parse(body.comment.created_at)).not.toBeNaN();
         });
     });
+    it("400: bad requesst incorrect body format", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ incorrect: true })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("400: review_id invalid", () => {
+      return request(app)
+        .post("/api/reviews/invalid/comments")
+        .send({ body: "body", username: "mallionaire" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("404: review not found", () => {
+      return request(app)
+        .post("/api/reviews/100/comments")
+        .send({ body: "body", username: "mallionaire" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "review not found" });
+        });
+    });
   });
 });

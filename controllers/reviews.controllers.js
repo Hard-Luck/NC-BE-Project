@@ -13,9 +13,11 @@ exports.getReview = (req, res, next) => {
 };
 
 exports.getReviews = (req, res, next) => {
-  getAllReviews(req.query.category).then((reviews) => {
-    res.status(200).send({ reviews });
-  });
+  getAllReviews(req.query.category)
+    .then((reviews) => {
+      res.status(200).send({ reviews });
+    })
+    .catch(next);
 };
 
 exports.patchReview = (req, res, next) => {

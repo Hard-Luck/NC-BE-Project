@@ -89,5 +89,28 @@ exports.getAllReviews = (category) => {
     queryParams.push(category);
   }
   query += orderGroupQuery;
-  return db.query(query, queryParams).then(({ rows }) => rows);
+
+  return db
+    .query(query, queryParams)
+    .then(({ rows, rowCount }) => {
+      let speciesFound = true;
+      if (rowCount === 0) {
+        speciesFound = false;
+        return Promise.all([
+          db.query(`SELECT * from categories WHERE slug = $1`, queryParams),
+          speciesFound,
+        ]);
+      }
+      const result = rows;
+      return [rows, speciesFound];
+    })
+    .then(([result, speciesFound]) => {
+      if (speciesFound) {
+        return result;
+      }
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "category not found" });
+      }
+      return [];
+    });
 };

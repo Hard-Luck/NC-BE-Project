@@ -194,5 +194,13 @@ describe("NC_Games API", () => {
           expect(body.reviews).toEqual([]);
         });
     });
+    it("404: when category is not in categories", () => {
+      return request(app)
+        .get("/api/reviews?category=NOTACATEGORY")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "category not found" });
+        });
+    });
   });
 });

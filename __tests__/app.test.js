@@ -203,4 +203,24 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe("GET /api/reviews/:review_id/comments", () => {
+    it("200: Returns array of comments for the given review_id", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(comments).toHaveLength(3);
+          comments.forEach((comment) => {
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("author", expect.any(String));
+            expect(comment).toHaveProperty("votes", expect.any(Number));
+            expect(comment).toHaveProperty("review_id", expect.any(Number));
+            expect(comment).toHaveProperty("body", expect.any(String));
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+            expect(Date.parse(comment.created_at)).not.toBeNaN();
+          });
+        });
+    });
+  });
 });

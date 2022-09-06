@@ -31,6 +31,7 @@ describe("NC_Games API", () => {
         .then(({ body }) => {
           const { review } = body;
           expect(review).toHaveProperty("review_id", 2);
+          expect(review).toHaveProperty("comment_count", 3);
           expect(review).toHaveProperty("title", expect.any(String));
           expect(review).toHaveProperty("review_body", expect.any(String));
           expect(review).toHaveProperty("designer", expect.any(String));

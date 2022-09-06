@@ -56,3 +56,61 @@ exports.updateVotes = (review_id, votes) => {
       return rows[0];
     });
 };
+
+exports.getAllReviews = (category) => {
+  let query = `
+  SELECT 
+    owner,
+    title,
+    reviews.review_id,
+    category,
+    review_img_url,
+    reviews.created_at,
+    reviews.votes,
+    designer,
+    cast(count(comments.review_id) AS INT) AS comment_count
+  FROM
+    reviews
+  LEFT JOIN 
+    comments 
+  ON 
+    reviews.review_id = comments.review_id
+
+    `;
+  const whereQuery = ` WHERE category = $1 `;
+  const orderGroupQuery = `   
+  GROUP BY
+    reviews.review_id
+  ORDER BY
+    reviews.created_at DESC; `;
+  const queryParams = [];
+  if (category !== undefined) {
+    query += whereQuery;
+    queryParams.push(category);
+  }
+  query += orderGroupQuery;
+
+  return db
+    .query(query, queryParams)
+    .then(({ rows, rowCount }) => {
+      let speciesFound = true;
+      if (rowCount === 0) {
+        speciesFound = false;
+        return Promise.all([
+          db.query(`SELECT * from categories WHERE slug = $1`, queryParams),
+          speciesFound,
+        ]);
+      }
+      const result = rows;
+      return [rows, speciesFound];
+    })
+    .then(([result, speciesFound]) => {
+      if (speciesFound) {
+        return result;
+      }
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "category not found" });
+      }
+      return [];
+    });
+};

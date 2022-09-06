@@ -139,4 +139,68 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe("GET /api/reviews", () => {
+    it("200: Responds with all review objects with owner replaced with username from users table and comment count", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toHaveLength(13);
+          reviews.forEach((review) => {
+            expect(review).toHaveProperty("owner", expect.any(String));
+            expect(review).toHaveProperty("title", expect.any(String));
+            expect(review).toHaveProperty("review_id", expect.any(Number));
+            expect(review).toHaveProperty("category", expect.any(String));
+            expect(review).toHaveProperty("review_img_url", expect.any(String));
+            expect(review).toHaveProperty("votes", expect.any(Number));
+            expect(review).toHaveProperty("designer", expect.any(String));
+            expect(review).toHaveProperty("comment_count", expect.any(Number));
+
+            expect(review).toHaveProperty("created_at", expect.any(String));
+            expect(Date.parse(review.created_at)).not.toBeNaN();
+          });
+          expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    it("200: returns array with all revies of the category with category matches are found", () => {
+      return request(app)
+        .get("/api/reviews?category=social%20deduction")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toHaveLength(11);
+          reviews.forEach((review) => {
+            expect(review).toHaveProperty("owner", expect.any(String));
+            expect(review).toHaveProperty("title", expect.any(String));
+            expect(review).toHaveProperty("review_id", expect.any(Number));
+            expect(review).toHaveProperty("category", expect.any(String));
+            expect(review).toHaveProperty("review_img_url", expect.any(String));
+            expect(review).toHaveProperty("votes", expect.any(Number));
+            expect(review).toHaveProperty("designer", expect.any(String));
+            expect(review).toHaveProperty("comment_count", expect.any(Number));
+
+            expect(review).toHaveProperty("created_at", expect.any(String));
+            expect(Date.parse(review.created_at)).not.toBeNaN();
+          });
+          expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    it("200: returns empty array when category is in categories but no revies are returned", () => {
+      return request(app)
+        .get("/api/reviews?category=children%27s%20games")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toEqual([]);
+        });
+    });
+    it("404: when category is not in categories", () => {
+      return request(app)
+        .get("/api/reviews?category=NOTACATEGORY")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "category not found" });
+        });
+    });
+  });
 });

@@ -5,5 +5,5 @@ exports.getComments = (req, res, next) => {
     .then((comments) => {
       res.status(200).send({ comments });
     })
-    .then(next);
+    .catch(next);
 };

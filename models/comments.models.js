@@ -1,6 +1,9 @@
 const db = require("../db/connection");
 
 exports.getCommentsForReview = (review_id) => {
+  if (typeof +review_id !== "number") {
+    return Promise.reject({ status: 400, message: "bad request" });
+  }
   return db
     .query(
       `
@@ -12,5 +15,10 @@ exports.getCommentsForReview = (review_id) => {
   `,
       [review_id]
     )
-    .then(({ rows }) => rows);
+    .then(({ rows }) => {
+      if (rows.length > 0) {
+        return rows;
+      }
+      return Promise.reject({ status: 404, msg: "review not found" });
+    });
 };

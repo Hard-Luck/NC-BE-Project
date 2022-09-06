@@ -222,5 +222,21 @@ describe("NC_Games API", () => {
           });
         });
     });
+    it("400: bad request, when review_id isnt a number", () => {
+      return request(app)
+        .get("/api/reviews/NOTANUMBER/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("404: review not found, when review_id isn't found", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "review not found" });
+        });
+    });
   });
 });

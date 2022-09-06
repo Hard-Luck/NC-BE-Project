@@ -215,11 +215,19 @@ describe("NC_Games API", () => {
             expect(comment).toHaveProperty("comment_id", expect.any(Number));
             expect(comment).toHaveProperty("author", expect.any(String));
             expect(comment).toHaveProperty("votes", expect.any(Number));
-            expect(comment).toHaveProperty("review_id", expect.any(Number));
+            expect(comment).toHaveProperty("review_id", 2);
             expect(comment).toHaveProperty("body", expect.any(String));
             expect(comment).toHaveProperty("created_at", expect.any(String));
             expect(Date.parse(comment.created_at)).not.toBeNaN();
           });
+        });
+    });
+    it("200: returns an empty array when a review_id is valid but has no comments", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
         });
     });
     it("400: bad request, when review_id isnt a number", () => {
@@ -232,7 +240,7 @@ describe("NC_Games API", () => {
     });
     it("404: review not found, when review_id isn't found", () => {
       return request(app)
-        .get("/api/reviews/1/comments")
+        .get("/api/reviews/100/comments")
         .expect(404)
         .then(({ body }) => {
           expect(body).toEqual({ msg: "review not found" });

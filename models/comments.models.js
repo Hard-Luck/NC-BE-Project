@@ -15,9 +15,31 @@ exports.getCommentsForReview = (review_id) => {
   `,
       [review_id]
     )
-    .then(({ rows }) => {
-      if (rows.length > 0) {
-        return rows;
+    .then((results) => {
+      let flag = true;
+      if (results.rows.length > 0) {
+        return Promise.all([results, flag]);
+      }
+      flag = false;
+      return Promise.all([
+        db.query(
+          ` SELECT * 
+            FROM 
+              reviews
+            WHERE 
+              review_id = $1`,
+          [review_id]
+        ),
+        flag,
+      ]);
+    })
+    .then(([results, flag]) => {
+      console.log(results.rows);
+      if (flag) {
+        return results.rows;
+      }
+      if (results.rows.length > 0) {
+        return [];
       }
       return Promise.reject({ status: 404, msg: "review not found" });
     });

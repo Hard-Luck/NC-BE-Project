@@ -357,4 +357,30 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe("delete comment by comment_id", () => {
+    it("404: comment not found", () => {
+      return request(app)
+        .delete("/api/comments/1991")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "comment not found" });
+        });
+    });
+    it("204: no response body comment deleted", () => {
+      return request(app)
+        .delete("/api/comments/2")
+        .expect(204)
+        .then(() => {
+          return request(app).delete("/api/comments/2").expect(404);
+        });
+    });
+    it("400: bad request id comment id is not a number", () => {
+      return request(app)
+        .delete("/api/comments/NOTAVALIDID")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+  });
 });

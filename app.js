@@ -3,6 +3,7 @@ const { getCategories } = require("./controllers/categories.controllers");
 const {
   getComments,
   postComment,
+  deleteComment,
 } = require("./controllers/comments.controllers");
 const {
   handleUncaughtError,
@@ -29,6 +30,8 @@ app.patch("/api/reviews/:review_id", patchReview);
 
 app.get("/api/reviews/:review_id/comments", getComments);
 app.post("/api/reviews/:review_id/comments", postComment);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use(handleCustomError);
 app.use(handlePostgresError);

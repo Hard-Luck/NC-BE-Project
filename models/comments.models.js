@@ -92,7 +92,6 @@ exports.removeCommentByID = (comment_id) => {
       [comment_id]
     )
     .then(({ rowCount }) => {
-      console.log("here");
       if (rowCount === 0) {
         return Promise.reject({ status: 404, msg: "comment not found" });
       }

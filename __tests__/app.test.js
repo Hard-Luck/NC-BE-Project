@@ -363,14 +363,13 @@ describe("NC_Games API", () => {
         .delete("/api/comments/1991")
         .expect(404)
         .then(({ body }) => {
-          console.log(body);
           expect(body).toEqual({ msg: "comment not found" });
         });
     });
-    it("200: no response body comment deleted", () => {
+    it("204: no response body comment deleted", () => {
       return request(app)
         .delete("/api/comments/2")
-        .expect(200)
+        .expect(204)
         .then(() => {
           return request(app).delete("/api/comments/2").expect(404);
         });
@@ -380,7 +379,6 @@ describe("NC_Games API", () => {
         .delete("/api/comments/NOTAVALIDID")
         .expect(400)
         .then(({ body }) => {
-          console.log(body);
           expect(body).toEqual({ msg: "bad request" });
         });
     });

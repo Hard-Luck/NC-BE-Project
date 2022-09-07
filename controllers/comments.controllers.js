@@ -21,10 +21,9 @@ exports.postComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-  console.log(req.params.comment_id);
   removeCommentByID(req.params.comment_id)
     .then(() => {
-      res.status(200).send();
+      res.status(204).send();
     })
     .catch(next);
 };

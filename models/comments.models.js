@@ -70,8 +70,7 @@ exports.addCommentToReview = (review_id, { username, body }) => {
       VALUES
         ($1, $2, $3)
       RETURNING *;
-      `;
-
+`;
       return db.query(query, [body, username, review_id]).then(({ rows }) => {
         return rows[0];
       });

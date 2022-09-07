@@ -267,6 +267,7 @@ describe("NC_Games API", () => {
           expect(Date.parse(body.comment.created_at)).not.toBeNaN();
         });
     });
+
     it("400: bad requesst incorrect body format", () => {
       return request(app)
         .post("/api/reviews/1/comments")

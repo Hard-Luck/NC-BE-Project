@@ -45,15 +45,35 @@ exports.getCommentsForReview = (review_id) => {
 };
 
 exports.addCommentToReview = (review_id, { username, body }) => {
-  const query = `
-  INSERT INTO comments
-    (body, author, review_id)
-  VALUES
-   ($1, $2, $3)
-  RETURNING *;
-  `;
+  return db
+    .query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "review not found" });
+      } else {
+        return db.query(
+          `
+        
+        SELECT * FROM users WHERE username = $1`,
+          [username]
+        );
+      }
+    })
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "username not found" });
+      }
 
-  return db.query(query, [body, username, review_id]).then(({ rows }) => {
-    return rows[0];
-  });
+      const query = `
+      INSERT INTO comments
+        (body, author, review_id)
+      VALUES
+        ($1, $2, $3)
+      RETURNING *;
+      `;
+
+      return db.query(query, [body, username, review_id]).then(({ rows }) => {
+        return rows[0];
+      });
+    });
 };

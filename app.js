@@ -1,6 +1,9 @@
 const express = require("express");
 const { getCategories } = require("./controllers/categories.controllers");
-const { getComments } = require("./controllers/comments.controllers");
+const {
+  getComments,
+  postComment,
+} = require("./controllers/comments.controllers");
 const {
   handleUncaughtError,
   handleCustomError,
@@ -25,6 +28,7 @@ app.get("/api/reviews/:review_id", getReview);
 app.patch("/api/reviews/:review_id", patchReview);
 
 app.get("/api/reviews/:review_id/comments", getComments);
+app.post("/api/reviews/:review_id/comments", postComment);
 
 app.use(handleCustomError);
 app.use(handlePostgresError);

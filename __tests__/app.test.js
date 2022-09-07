@@ -299,4 +299,62 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe("POST /api/reviews/:review_id/comment", () => {
+    it("201: adds comment to a review", () => {
+      const commentBody = {
+        username: "mallionaire",
+        body: "this is a comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(commentBody)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toHaveProperty("body", commentBody.body);
+          expect(body.comment).toHaveProperty("author", commentBody.username);
+          expect(body.comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(body.comment).toHaveProperty("review_id", 1);
+          expect(body.comment).toHaveProperty("votes", 0);
+          expect(body.comment).toHaveProperty("created_at", expect.any(String));
+          expect(Date.parse(body.comment.created_at)).not.toBeNaN();
+        });
+    });
+
+    it("400: bad requesst incorrect body format", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ incorrect: true, username: "mallionaire" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("400: review_id invalid", () => {
+      return request(app)
+        .post("/api/reviews/invalid/comments")
+        .send({ body: "body", username: "mallionaire" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("404: review not found", () => {
+      return request(app)
+        .post("/api/reviews/100/comments")
+        .send({ body: "body", username: "mallionaire" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "review not found" });
+        });
+    });
+    it("404: username not found", () => {
+      return request(app)
+        .post("/api/reviews/2/comments")
+        .send({ body: "body", username: "NOTAUSERNAME" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "username not found" });
+        });
+    });
+  });
 });

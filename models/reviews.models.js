@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.getReviewById = (review_id) => {
   return db
@@ -57,7 +58,32 @@ exports.updateVotes = (review_id, votes) => {
     });
 };
 
-exports.getAllReviews = (category) => {
+exports.getAllReviews = ({ sort_by, category, order }) => {
+  const validSorts = [
+    "owner",
+    "title",
+    "review_id",
+    "category",
+    "review_img_url",
+    "created_at",
+    "votes",
+    "designer",
+    "comment_count",
+  ];
+  if (!sort_by) sort_by = "created_at";
+  if (validSorts.includes(sort_by)) {
+    if (sort_by !== "comment_count") {
+      sort_by = `reviews.${sort_by}`;
+    }
+  } else {
+    return Promise.reject({ status: 404, msg: "sort_by not found" });
+  }
+
+  if (!order) order = "DESC";
+  if (!["DESC", "ASC"].includes(order.toUpperCase())) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+
   let query = `
   SELECT 
     owner,
@@ -75,21 +101,23 @@ exports.getAllReviews = (category) => {
     comments 
   ON 
     reviews.review_id = comments.review_id
-
     `;
   const whereQuery = ` WHERE category = $1 `;
-  const orderGroupQuery = `   
+  const orderGroupQuery = format(
+    `
   GROUP BY
     reviews.review_id
   ORDER BY
-    reviews.created_at DESC; `;
+    %1$s %2$s; `,
+    sort_by,
+    order
+  );
   const queryParams = [];
   if (category !== undefined) {
     query += whereQuery;
     queryParams.push(category);
   }
   query += orderGroupQuery;
-
   return db
     .query(query, queryParams)
     .then(({ rows, rowCount }) => {

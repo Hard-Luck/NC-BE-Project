@@ -34,7 +34,6 @@ exports.getCommentsForReview = (review_id) => {
       ]);
     })
     .then(([results, flag]) => {
-      console.log(results.rows);
       if (flag) {
         return results.rows;
       }

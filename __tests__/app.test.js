@@ -8,6 +8,16 @@ beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
 describe("NC_Games API", () => {
+  describe("GET /api", () => {
+    it("200 and returns a list of endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("endpoints");
+        });
+    });
+  });
   describe("GET /api/categories", () => {
     it("200: Returns all category objects with slug and description", () => {
       return request(app)
@@ -299,7 +309,7 @@ describe("NC_Games API", () => {
         });
     });
   });
-  describe("POST /api/reviews/:review_id/comment", () => {
+  describe("POST /api/reviews/:review_id/comments", () => {
     it("201: adds comment to a review", () => {
       const commentBody = {
         username: "mallionaire",

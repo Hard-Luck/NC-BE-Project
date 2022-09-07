@@ -1,4 +1,5 @@
 const express = require("express");
+const { getAPIJson } = require("./controllers/api.controllers");
 const { getCategories } = require("./controllers/categories.controllers");
 const {
   getComments,
@@ -18,6 +19,8 @@ const { getUsers } = require("./controllers/users.controllers");
 
 const app = express();
 app.use(express.json());
+
+app.get("/api", getAPIJson);
 
 app.get("/api/categories", getCategories);
 

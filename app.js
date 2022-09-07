@@ -1,12 +1,11 @@
+const express = require("express");
+const app = express();
+const apiRouter = require("./routes/api.routes");
 const {
   handleUncaughtError,
   handleCustomError,
   handlePostgresError,
 } = require("./controllers/errors.controllers");
-
-const express = require("express");
-const apiRouter = require("./routes/api.routes");
-const app = express();
 
 app.use(express.json());
 

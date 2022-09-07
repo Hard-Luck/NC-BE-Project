@@ -58,7 +58,11 @@ exports.updateVotes = (review_id, votes) => {
     });
 };
 
-exports.getAllReviews = ({ sort_by, category, order }) => {
+exports.getAllReviews = ({
+  sort_by = "created_at",
+  category,
+  order = "DESC",
+}) => {
   const validSorts = [
     "owner",
     "title",
@@ -70,7 +74,6 @@ exports.getAllReviews = ({ sort_by, category, order }) => {
     "designer",
     "comment_count",
   ];
-  if (!sort_by) sort_by = "created_at";
   if (validSorts.includes(sort_by)) {
     if (sort_by !== "comment_count") {
       sort_by = `reviews.${sort_by}`;
@@ -78,8 +81,6 @@ exports.getAllReviews = ({ sort_by, category, order }) => {
   } else {
     return Promise.reject({ status: 404, msg: "sort_by not found" });
   }
-
-  if (!order) order = "DESC";
   if (!["DESC", "ASC"].includes(order.toUpperCase())) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }

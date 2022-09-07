@@ -13,10 +13,8 @@ const express = require("express");
 const reviewsRouter = express.Router();
 
 reviewsRouter.get("/", getReviews);
-reviewsRouter.get("/:review_id", getReview);
-reviewsRouter.patch("/:review_id", patchReview);
+reviewsRouter.route("/:review_id").get(getReview).patch(patchReview);
 
-reviewsRouter.get("/:review_id/comments", getComments);
-reviewsRouter.post("/:review_id/comments", postComment);
+reviewsRouter.route("/:review_id/comments").get(getComments).post(postComment);
 
 module.exports = reviewsRouter;

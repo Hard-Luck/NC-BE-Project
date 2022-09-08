@@ -12,6 +12,8 @@ const {
 
 app.use(express.json());
 
+app.use("/api", apiRouter);
+
 app.all("/*", badEndpoint);
 
 app.use(handleCustomError);

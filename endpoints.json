@@ -111,5 +111,28 @@
   },
   "DELETE /api/reviews/:review_id/comments": {
     "description": "deletes review corresponding to the review_id serves no response body"
+  },
+
+  "PATCH /api/comments/:comment_id": {
+    "description": "alters votes for a review matching comment_ ad serves the modified review",
+    "exampleRequestBody": { "inc_votes": 10 },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 69,
+        "body": "Quis duis mollit ad enim deserunt.",
+        "review_id": 1,
+        "author": "someName",
+        "votes": 13,
+        "created_at": "01-01-01T11:11:11.111Z"
+      }
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves a user object for the matching username",
+    "exampleResponse": {
+      "username": "A-User",
+      "name": "Andy Userton",
+      "avatar_url": "www.auserswebsite.com"
+    }
   }
 }

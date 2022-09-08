@@ -1,17 +1,19 @@
 const { getAllUsers, getUserByUsername } = require("../models/users.models");
 
-exports.getUsers = (req, res, next) => {
-  getAllUsers()
-    .then((users) => {
-      res.status(200).send({ users });
-    })
-    .catch((err) => next(err));
+exports.getUsers = async (req, res, next) => {
+  try {
+    const users = await getAllUsers();
+    res.status(200).send({ users });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.getUser = (req, res, next) => {
-  getUserByUsername(req.params.username)
-    .then((user) => {
-      res.status(200).send({ user });
-    })
-    .catch(next);
+exports.getUser = async (req, res, next) => {
+  try {
+    const user = await getUserByUsername(req.params.username);
+    res.status(200).send({ user });
+  } catch (err) {
+    next(err);
+  }
 };

@@ -4,26 +4,29 @@ const {
   getAllReviews,
 } = require("../models/reviews.models");
 
-exports.getReview = (req, res, next) => {
-  getReviewById(req.params.review_id)
-    .then((review) => {
-      res.status(200).send({ review });
-    })
-    .catch(next);
+exports.getReview = async (req, res, next) => {
+  try {
+    const review = await getReviewById(req.params.review_id);
+    res.status(200).send({ review });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.getReviews = (req, res, next) => {
-  getAllReviews(req.query)
-    .then((reviews) => {
-      res.status(200).send({ reviews });
-    })
-    .catch(next);
+exports.getReviews = async (req, res, next) => {
+  try {
+    const reviews = await getAllReviews(req.query);
+    res.status(200).send({ reviews });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.patchReview = (req, res, next) => {
-  updateVotes(req.params.review_id, req.body.inc_votes)
-    .then((review) => {
-      res.status(200).send({ review });
-    })
-    .catch(next);
+exports.patchReview = async (req, res, next) => {
+  try {
+    const review = await updateVotes(req.params.review_id, req.body.inc_votes);
+    res.status(200).send({ review });
+  } catch (err) {
+    next(err);
+  }
 };

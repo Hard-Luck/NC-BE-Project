@@ -1,80 +1,52 @@
 const db = require("../db/connection");
+const { insertIntoTable, selectAllFromTableWhere } = require("./utils");
 
-exports.getCommentsForReview = (review_id) => {
+exports.getCommentsForReview = async (review_id) => {
   if (typeof +review_id !== "number") {
     return Promise.reject({ status: 400, message: "bad request" });
   }
-  return db
-    .query(
-      `
-  SELECT * 
-  FROM 
-    comments
-  WHERE 
-    review_id = $1
-  `,
-      [+review_id]
-    )
-    .then((results) => {
-      let flag = true;
-      if (results.rows.length > 0) {
-        return Promise.all([results, flag]);
-      }
-      flag = false;
-      return Promise.all([
-        db.query(
-          ` SELECT * 
-            FROM 
-              reviews
-            WHERE 
-              review_id = $1`,
-          [review_id]
-        ),
-        flag,
-      ]);
-    })
-    .then(([results, flag]) => {
-      if (flag) {
-        return results.rows;
-      }
-      if (results.rows.length > 0) {
-        return [];
-      }
-      return Promise.reject({ status: 404, msg: "review not found" });
-    });
+  const comments = await selectAllFromTableWhere(
+    db,
+    "comments",
+    "review_id",
+    review_id
+  );
+  if (comments.length > 0) {
+    return comments;
+  }
+  const validReviewCheck = await selectAllFromTableWhere(
+    db,
+    "reviews",
+    "review_id",
+    review_id
+  );
+
+  if (validReviewCheck.length > 0) {
+    return [];
+  }
+  return Promise.reject({ status: 404, msg: "review not found" });
 };
 
-exports.addCommentToReview = (review_id, { username, body }) => {
-  return db
-    .query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
-    .then(({ rowCount }) => {
-      if (rowCount === 0) {
-        return Promise.reject({ status: 404, msg: "review not found" });
-      } else {
-        return db.query(
-          `
-        
-        SELECT * FROM users WHERE username = $1`,
-          [username]
-        );
-      }
-    })
-    .then(({ rowCount }) => {
-      if (rowCount === 0) {
-        return Promise.reject({ status: 404, msg: "username not found" });
-      }
+exports.addCommentToReview = async (review_id, { username, body }) => {
+  const review = await selectAllFromTableWhere(
+    db,
+    "reviews",
+    "review_id",
+    review_id
+  );
+  if (review.length === 0) {
+    return Promise.reject({ status: 404, msg: "review not found" });
+  }
+  const user = await selectAllFromTableWhere(db, "users", "username", username);
+  if (user.length === 0) {
+    return Promise.reject({ status: 404, msg: "username not found" });
+  }
 
-      const query = `
-      INSERT INTO comments
-        (body, author, review_id)
-      VALUES
-        ($1, $2, $3)
-      RETURNING *;
-`;
-      return db.query(query, [body, username, review_id]).then(({ rows }) => {
-        return rows[0];
-      });
-    });
+  const column_names = ["body", "author", "review_id"];
+  const values = [body, username, review_id];
+
+  const comment = await insertIntoTable(db, "comments", column_names, values);
+  return comment[0];
 };
 
 exports.removeCommentByID = (comment_id) => {

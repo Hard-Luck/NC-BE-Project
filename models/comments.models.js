@@ -13,7 +13,7 @@ exports.getCommentsForReview = (review_id) => {
   WHERE 
     review_id = $1
   `,
-      [review_id]
+      [+review_id]
     )
     .then((results) => {
       let flag = true;

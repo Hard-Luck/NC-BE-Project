@@ -19,3 +19,7 @@ exports.handleCustomError = (err, req, res, next) => {
     next(err);
   }
 };
+
+exports.badEndpoint = (err, req, res, next) => {
+  res.status(400).send({ msg: "page not found" });
+};

@@ -1,6 +1,8 @@
 const express = require("express");
+
 const app = express();
 const { apiRouter } = require("./routes/routes");
+
 const {
   handleUncaughtError,
   handleCustomError,
@@ -9,8 +11,6 @@ const {
 } = require("./controllers/errors.controllers");
 
 app.use(express.json());
-
-app.use("/api", apiRouter);
 
 app.all("/*", badEndpoint);
 

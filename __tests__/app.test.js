@@ -417,7 +417,7 @@ describe("NC_Games API", () => {
         });
     });
   });
-  describe.only("PATCH /api/comments/:comment_id", () => {
+  describe("PATCH /api/comments/:comment_id", () => {
     it("200: updates comment and returns new comment object", () => {
       const reqBody = { inc_votes: 10 };
       const expected = {

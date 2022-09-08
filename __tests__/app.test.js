@@ -417,4 +417,69 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe.only("PATCH /api/comments/:comment_id", () => {
+    it("200: updates comment and returns new comment object", () => {
+      const reqBody = { inc_votes: 10 };
+      const expected = {
+        comment_id: 1,
+        body: "I loved this game too!",
+        votes: 26,
+        author: "bainesface",
+        review_id: 2,
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(reqBody)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              created_at: expect.any(String),
+              ...expected,
+            })
+          );
+          expect(Date.parse(body.comment.created_at)).not.toBeNaN();
+        });
+    });
+    it("400: bad request, when comment id is invalid", () => {
+      const reqBody = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/comments/invalid")
+        .send(reqBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("400: bad request when request body is incorrect", () => {
+      const reqBody = { invalid: 10 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(reqBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("400: when inc_votes is invalid", () => {
+      const reqBody = { inc_votes: "invalid_type" };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(reqBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("404: when comment doesnt exist", () => {
+      const reqBody = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/comments/12345")
+        .send(reqBody)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "comment not found" });
+        });
+    });
+  });
 });

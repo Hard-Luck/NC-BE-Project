@@ -108,5 +108,8 @@
         "created_at": "2022-09-07T11:07:18.728Z"
       }
     }
+  },
+  "DELETE /api/reviews/:review_id/comments": {
+    "description": "deletes review corresponding to the review_id serves no response body"
   }
 }

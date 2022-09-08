@@ -393,4 +393,28 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe("GET /api/users/:username", () => {
+    test("200: returns user object when username is a match", () => {
+      const expected = {
+        username: "mallionaire",
+        avatar_url:
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        name: "haz",
+      };
+      return request(app)
+        .get("/api/users/mallionaire")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.user).toEqual(expected);
+        });
+    });
+    test("404: returns user not found when username is not a match", () => {
+      return request(app)
+        .get("/api/users/NOTAUSERNAME")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "user not found" });
+        });
+    });
+  });
 });

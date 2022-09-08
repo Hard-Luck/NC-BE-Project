@@ -1,15 +1,18 @@
 const express = require("express");
 const app = express();
-const apiRouter = require("./routes/api.routes");
+const { apiRouter } = require("./routes/routes");
 const {
   handleUncaughtError,
   handleCustomError,
   handlePostgresError,
+  badEndpoint,
 } = require("./controllers/errors.controllers");
 
 app.use(express.json());
 
 app.use("/api", apiRouter);
+
+app.all("/*", badEndpoint);
 
 app.use(handleCustomError);
 app.use(handlePostgresError);

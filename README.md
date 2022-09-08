@@ -2,6 +2,9 @@
 
 Project for Northcoders Backend Week 3.
 
+Hosted on Heroku
+Found: https://nc-be-project-nc-games.herokuapp.com/api
+
 An api used to review board games and comment on the reviews. All endpoints serve json responses and detailed instruction of how to use the endpoints can be found in endpoints.json.
 
 ### Cloning the repository

@@ -5,7 +5,7 @@ const {
   addReview,
   deleteReview,
 } = require("../models/reviews.models");
-const { insertIntoTable } = require("../models/utils");
+const { insertIntoTable } = require("../models/db-utils");
 
 exports.getReview = async (req, res, next) => {
   try {

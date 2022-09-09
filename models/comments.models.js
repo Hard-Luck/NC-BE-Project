@@ -5,7 +5,7 @@ const {
   deleteFromTableWhere,
   updateVotes,
   countComments,
-} = require("./utils");
+} = require("./db-utils");
 
 exports.getCommentsForReview = async (review_id, { p = 1, limit = 10 }) => {
   if (

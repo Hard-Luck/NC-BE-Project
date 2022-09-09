@@ -7,7 +7,7 @@ const {
   insertIntoTable,
   countReviews,
   deleteFromTableWhere,
-} = require("./utils");
+} = require("./db-utils");
 
 exports.getReviewById = async (review_id) => {
   const result = await selectFromReviewsJoinComments(

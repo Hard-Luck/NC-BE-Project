@@ -105,7 +105,6 @@ describe("PATCH /api/reviews/:review_id", () => {
       .expect(404);
     expect(body).toEqual({ msg: "review not found" });
   });
-
   describe("GET /api/users", () => {
     it("200: Returns all category objects with username, name and avatar_url", async () => {
       const { body } = await request(app).get("/api/users").expect(200);
@@ -118,7 +117,6 @@ describe("PATCH /api/reviews/:review_id", () => {
       });
     });
   });
-
   describe("GET /api/reviews - paginated", () => {
     it("200: Responds with all review objects with owner replaced with username from users table and comment count", async () => {
       const { body } = await request(app).get("/api/reviews").expect(200);

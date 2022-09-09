@@ -607,4 +607,42 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe("POST api/categories", () => {
+    it("200: adds a category and returns a category object", () => {
+      const postCategory = {
+        slug: "test slug",
+        description: "test description",
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(postCategory)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body).toEqual({ category: postCategory });
+        });
+    });
+    it("400: bad request, when incorrect object keys are passed", () => {
+      const postCategory = { slug: "test slug", notakey: "invalid" };
+      return request(app)
+        .post("/api/categories")
+        .send(postCategory)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("400: bad request when values of wrong type are passed", () => {
+      const postCategory = {
+        slug: "test slug",
+        description: ["Shouldnt work"],
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(postCategory)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+  });
 });

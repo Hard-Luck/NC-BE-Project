@@ -482,7 +482,7 @@ describe("NC_Games API", () => {
         });
     });
   });
-  describe.only("POST /api/review", () => {
+  describe("POST /api/review", () => {
     it("adds a review to the table and returns the new entry object", () => {
       const reqBody = {
         owner: "mallionaire",

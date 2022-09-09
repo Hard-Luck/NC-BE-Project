@@ -149,14 +149,15 @@ describe("NC_Games API", () => {
         });
     });
   });
-  describe("GET /api/reviews", () => {
+  describe("GET /api/reviews - paginated", () => {
     it("200: Responds with all review objects with owner replaced with username from users table and comment count", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
-          expect(reviews).toHaveLength(13);
+          //Was 13 but pagination has been added
+          expect(reviews).toHaveLength(10);
           reviews.forEach((review) => {
             expect(review).toHaveProperty("owner", expect.any(String));
             expect(review).toHaveProperty("title", expect.any(String));
@@ -173,13 +174,24 @@ describe("NC_Games API", () => {
           expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
+    it("returns last 3 reviews when second page is requested", () => {
+      return request(app)
+        .get("/api/reviews?p=2")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          //Was 13 but pagination has been added
+          expect(reviews).toHaveLength(3);
+        });
+    });
     it("200: returns array with all reviews of the category with category matches are found", () => {
       return request(app)
         .get("/api/reviews?category=social%20deduction")
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
-          expect(reviews).toHaveLength(11);
+          // was 11 then pagination
+          expect(reviews).toHaveLength(10);
           reviews.forEach((review) => {
             expect(review).toHaveProperty("owner", expect.any(String));
             expect(review).toHaveProperty("title", expect.any(String));
@@ -212,6 +224,34 @@ describe("NC_Games API", () => {
           expect(body).toEqual({ msg: "category not found" });
         });
     });
+    it("404: when page is not in bound", () => {
+      return request(app)
+        .get("/api/reviews?p=10000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "page not found" });
+        });
+    });
+    it("400: when page is not a positive integer", () => {
+      return request(app)
+        .get("/api/reviews?p=3.14159")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            msg: "p and limit must be a positive integer",
+          });
+        });
+    });
+    it("400: when limit is not a positive integer", () => {
+      return request(app)
+        .get("/api/reviews?limit=1.1")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            msg: "p and limit must be a positive integer",
+          });
+        });
+    });
   });
   describe("get /api/reviews, with query params", () => {
     it("200: returns reviews sorted by valid column name, votes", () => {
@@ -220,7 +260,7 @@ describe("NC_Games API", () => {
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
-          expect(reviews).toHaveLength(13);
+          expect(reviews).toHaveLength(10);
           reviews.forEach((review) => {
             expect(review).toHaveProperty("owner", expect.any(String));
             expect(review).toHaveProperty("title", expect.any(String));
@@ -243,7 +283,7 @@ describe("NC_Games API", () => {
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
-          expect(reviews).toHaveLength(13);
+          expect(reviews).toHaveLength(10);
           expect(reviews).toBeSortedBy("votes");
         });
     });

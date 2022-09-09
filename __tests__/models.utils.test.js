@@ -86,7 +86,7 @@ describe("Util functions for models", () => {
       const results = await selectFromReviewsJoinComments(db, "category", [
         "social deduction",
       ]);
-      expect(results).toHaveLength(11);
+      expect(results).toHaveLength(10);
       results.forEach((result) => {
         expect(result).toHaveProperty("category", "social deduction");
       });

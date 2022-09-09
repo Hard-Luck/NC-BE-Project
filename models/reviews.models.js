@@ -6,6 +6,7 @@ const {
   selectAllFromTableWhere,
   validSortParams,
   insertIntoTable,
+  countReviews,
 } = require("./utils");
 
 exports.getReviewById = async (review_id) => {
@@ -38,6 +39,8 @@ exports.getAllReviews = async ({
   sort_by = "created_at",
   category,
   order = "DESC",
+  limit = 10,
+  p = 1,
 }) => {
   const validSorts = validSortParams(sort_by);
 
@@ -47,18 +50,33 @@ exports.getAllReviews = async ({
   if (!["DESC", "ASC"].includes(order.toUpperCase())) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
-
+  if (typeof +p !== "number" || typeof +limit !== "number") {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
   if (sort_by !== "comment_count") {
     sort_by = `reviews.${sort_by}`;
   }
-
+  if (((p || +limit) && +p % 1 !== 0) || +limit % 1 !== 0) {
+    return Promise.reject({
+      status: 400,
+      msg: "p and limit must be a positive integer",
+    });
+  }
+  const total = await countReviews(db, category);
+  const offset = limit * (p - 1);
   const results = await selectFromReviewsJoinComments(
     db,
     "category",
     category,
     sort_by,
-    order
+    order,
+    +limit,
+    +offset
   );
+  const maxPage = Math.ceil(total / +limit);
+  if (+p > maxPage && maxPage > 0) {
+    return Promise.reject({ status: 404, msg: "page not found" });
+  }
 
   if (results.length > 0) return results;
   const categoryCheck = await selectAllFromTableWhere(

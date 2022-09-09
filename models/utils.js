@@ -84,53 +84,12 @@ exports.updateVotes = async (
 
 exports.selectFromReviewsJoinComments = async (
   database,
-  whereColumnName,
-  matchingValue,
-  orderBy = "reviews.review_id",
-  orderDirection = "DESC"
-) => {
-  const query = format(
-    `
-    SELECT
-        reviews.review_id,
-        title,
-        category,
-        designer,
-        owner,
-        review_body,
-        review_img_url,
-        reviews.created_at,
-        reviews.votes,
-        cast(count(comments.review_id) AS INT) AS comment_count
-    FROM
-        reviews
-    LEFT JOIN 
-        comments 
-    ON 
-        reviews.review_id = comments.review_id
-    WHERE 
-        %1$s = %2$L
-    GROUP BY
-        reviews.review_id
-    ORDER BY
-        %3$s %4$s
-
-    `,
-    whereColumnName,
-    matchingValue,
-    orderBy,
-    orderDirection
-  );
-  const { rows } = await database.query(query);
-  return rows;
-};
-
-exports.selectFromReviewsJoinComments = async (
-  database,
   columnName,
   matchingValue,
   sortBy = "reviews.created_at",
-  orderDirection = "DESC"
+  orderDirection = "DESC",
+  limit = 10,
+  offset = 0
 ) => {
   let query = `
   SELECT 
@@ -163,9 +122,13 @@ exports.selectFromReviewsJoinComments = async (
   GROUP BY
     reviews.review_id
   ORDER BY
-    %1$s %2$s; `,
+    %1$s %2$s
+  LIMIT %3$s
+  OFFSET %4$s`,
     sortBy,
-    orderDirection
+    orderDirection,
+    limit,
+    offset
   );
 
   query += orderGroupQuery;
@@ -186,4 +149,16 @@ exports.validSortParams = (sortBy) => {
     "comment_count",
   ];
   return validSorts.includes(sortBy);
+};
+
+exports.countReviews = async (database, category) => {
+  let query = `
+  SELECT * from reviews`;
+
+  if (category) {
+    query += format(` WHERE category = %L`, category);
+  }
+
+  const { rowCount } = await database.query(query);
+  return rowCount;
 };

@@ -2,7 +2,9 @@ const {
   updateVotes,
   getReviewById,
   getAllReviews,
+  addReview,
 } = require("../models/reviews.models");
+const { insertIntoTable } = require("../models/utils");
 
 exports.getReview = async (req, res, next) => {
   try {
@@ -26,6 +28,15 @@ exports.patchReview = async (req, res, next) => {
   try {
     const review = await updateVotes(req.params.review_id, req.body.inc_votes);
     res.status(200).send({ review });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.postReview = async (req, res, next) => {
+  try {
+    const review = await addReview(req.body);
+    res.status(201).send({ review });
   } catch (err) {
     next(err);
   }

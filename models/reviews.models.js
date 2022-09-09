@@ -5,6 +5,7 @@ const {
   updateVotes,
   selectAllFromTableWhere,
   validSortParams,
+  insertIntoTable,
 } = require("./utils");
 
 exports.getReviewById = async (review_id) => {
@@ -68,4 +69,23 @@ exports.getAllReviews = async ({
   );
   if (categoryCheck.length > 0) return [];
   return Promise.reject({ status: 404, msg: "category not found" });
+};
+
+exports.addReview = async (reqBody) => {
+  const columnNames = Object.keys(reqBody);
+  const values = Object.values(reqBody);
+  const postedReview = await insertIntoTable(
+    db,
+    "reviews",
+    columnNames,
+    values
+  );
+  const review_id = postedReview[0].review_id;
+  const review = await selectFromReviewsJoinComments(
+    db,
+    "reviews.review_id",
+    review_id
+  );
+
+  return review;
 };

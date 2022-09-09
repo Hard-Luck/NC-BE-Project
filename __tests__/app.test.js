@@ -482,4 +482,61 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe.only("POST /api/review", () => {
+    it("adds a review to the table and returns the new entry object", () => {
+      const reqBody = {
+        owner: "mallionaire",
+        title: "test title",
+        review_body: "test body",
+        designer: "test designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(reqBody)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.review[0]).toHaveProperty("owner", "mallionaire");
+          expect(body.review[0]).toHaveProperty("title", "test title");
+          expect(body.review[0]).toHaveProperty("review_body", "test body");
+          expect(body.review[0]).toHaveProperty("designer", "test designer");
+          expect(body.review[0]).toHaveProperty("category", "dexterity");
+          expect(body.review[0]).toHaveProperty(
+            "review_id",
+            expect.any(Number)
+          );
+          expect(body.review[0]).toHaveProperty("votes", 0);
+          expect(body.review[0]).toHaveProperty("comment_count", 0);
+          expect(Date.parse(body.review[0].created_at)).not.toBeNaN();
+        });
+    });
+    it("400 bad request if request columnn names are invalid", () => {
+      const reqBody = {
+        invalid1: "string",
+        invalid2: "string",
+        invalid3: "string",
+        invalid4: "string",
+        invalid5: "string",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(reqBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("400 bad request if request columnn values are undefined or wrong type", () => {
+      const reqBody = {
+        owner: "string",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(reqBody)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+  });
 });

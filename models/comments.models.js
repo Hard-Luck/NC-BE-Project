@@ -1,5 +1,10 @@
 const db = require("../db/connection");
-const { insertIntoTable, selectAllFromTableWhere } = require("./utils");
+const {
+  insertIntoTable,
+  selectAllFromTableWhere,
+  deleteFromTableWhere,
+  updateVotes,
+} = require("./utils");
 
 exports.getCommentsForReview = async (review_id) => {
   if (typeof +review_id !== "number") {
@@ -11,9 +16,8 @@ exports.getCommentsForReview = async (review_id) => {
     "review_id",
     review_id
   );
-  if (comments.length > 0) {
-    return comments;
-  }
+  if (comments.length > 0) return comments;
+
   const validReviewCheck = await selectAllFromTableWhere(
     db,
     "reviews",
@@ -21,9 +25,8 @@ exports.getCommentsForReview = async (review_id) => {
     review_id
   );
 
-  if (validReviewCheck.length > 0) {
-    return [];
-  }
+  if (validReviewCheck.length > 0) return [];
+
   return Promise.reject({ status: 404, msg: "review not found" });
 };
 
@@ -49,44 +52,31 @@ exports.addCommentToReview = async (review_id, { username, body }) => {
   return comment[0];
 };
 
-exports.removeCommentByID = (comment_id) => {
+exports.removeCommentByID = async (comment_id) => {
   if (typeof +comment_id !== "number") {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
-  return db
-    .query(
-      `
-      DELETE FROM comments
-      WHERE comment_id = $1
-      RETURNING
-    *;
-      `,
-      [comment_id]
-    )
-    .then(({ rowCount }) => {
-      if (rowCount === 0) {
-        return Promise.reject({ status: 404, msg: "comment not found" });
-      }
-    });
+  const deleted = await deleteFromTableWhere(
+    db,
+    "comments",
+    "comment_id",
+    comment_id
+  );
+  if (deleted.length === 0) {
+    return Promise.reject({ status: 404, msg: "comment not found" });
+  }
 };
 
-exports.updateCommentVotes = (comment_id, votes) => {
-  return db
-    .query(
-      `           
-      UPDATE comments 
-      SET 
-        votes = (votes + $1) 
-      WHERE 
-        comment_id = $2
-      RETURNING *;
-      `,
-      [votes, comment_id]
-    )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "comment not found" });
-      }
-      return rows[0];
-    });
+exports.updateCommentVotes = async (comment_id, votes) => {
+  const updated = await updateVotes(
+    db,
+    "comments",
+    +votes,
+    "comment_id",
+    comment_id
+  );
+  if (updated.length === 0) {
+    return Promise.reject({ status: 404, msg: "comment not found" });
+  }
+  return updated[0];
 };

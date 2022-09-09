@@ -121,7 +121,69 @@ exports.selectFromReviewsJoinComments = async (
     orderBy,
     orderDirection
   );
-  console.log(query);
   const { rows } = await database.query(query);
   return rows;
+};
+
+exports.selectFromReviewsJoinComments = async (
+  database,
+  columnName,
+  matchingValue,
+  sortBy = "reviews.created_at",
+  orderDirection = "DESC"
+) => {
+  let query = `
+  SELECT 
+    owner,
+    title,
+    reviews.review_id,
+    category,
+    review_body,
+    review_img_url,
+    reviews.created_at,
+    reviews.votes,
+    designer,
+    cast(count(comments.review_id) AS INT) AS comment_count
+  FROM
+    reviews
+  LEFT JOIN 
+    comments 
+  ON 
+    reviews.review_id = comments.review_id
+    `;
+  if (
+    matchingValue &&
+    (columnName === "reviews.review_id" || columnName === "category")
+  ) {
+    const whereQuery = format(` WHERE %1$s = %2$L`, columnName, matchingValue);
+    query += whereQuery;
+  }
+  const orderGroupQuery = format(
+    `
+  GROUP BY
+    reviews.review_id
+  ORDER BY
+    %1$s %2$s; `,
+    sortBy,
+    orderDirection
+  );
+
+  query += orderGroupQuery;
+  const { rows } = await database.query(query);
+  return rows;
+};
+
+exports.validSortParams = (sortBy) => {
+  const validSorts = [
+    "owner",
+    "title",
+    "review_id",
+    "category",
+    "review_img_url",
+    "created_at",
+    "votes",
+    "designer",
+    "comment_count",
+  ];
+  return validSorts.includes(sortBy);
 };

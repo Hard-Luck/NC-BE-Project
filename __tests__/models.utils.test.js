@@ -1,5 +1,5 @@
 const seed = require("../db/seeds/seed");
-const testData = require("../db/data/test-data/index");
+const testData = require("../db/data/test-data");
 const db = require("../db/connection");
 const {
   selectAllFromTableWhere,
@@ -9,7 +9,9 @@ const {
   selectFromReviewsJoinComments,
 } = require("../models/utils");
 
-beforeAll(() => seed(testData));
+beforeAll(async () => {
+  await seed(testData);
+});
 afterAll(() => db.end());
 
 describe("Util functions for models", () => {
@@ -70,17 +72,15 @@ describe("Util functions for models", () => {
       expect(updated[0].votes).toBe(18);
     });
   });
-  describe.only("selectFromReviewsJoinComments", () => {
+  describe("selectFromReviewsJoinComments", () => {
     it("returns rows selected from reviews joined comments when passed a review_id", async () => {
       const results = await selectFromReviewsJoinComments(
         db,
         "reviews.review_id",
-        1,
-        ["reviews.review_id"],
-        "ASC"
+        2
       );
       expect(results).toHaveLength(1);
-      expect(results[0]).toHaveProperty("review_id", 1);
+      expect(results[0]).toHaveProperty("review_id", 2);
     });
     it("returns array of objects matching the category", async () => {
       const results = await selectFromReviewsJoinComments(db, "category", [

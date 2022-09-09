@@ -3,6 +3,7 @@ const {
   getReviewById,
   getAllReviews,
   addReview,
+  deleteReview,
 } = require("../models/reviews.models");
 const { insertIntoTable } = require("../models/utils");
 
@@ -37,6 +38,15 @@ exports.postReview = async (req, res, next) => {
   try {
     const review = await addReview(req.body);
     res.status(201).send({ review });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteReview = async (req, res, next) => {
+  try {
+    await deleteReview(req.params.review_id);
+    res.status(200).send();
   } catch (err) {
     next(err);
   }

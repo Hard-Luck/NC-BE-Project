@@ -645,4 +645,25 @@ describe("NC_Games API", () => {
         });
     });
   });
+  describe.only("DELETE /api/reviews/:review_id", () => {
+    it("200 deletes a review and responds with an empty body", () => {
+      return request(app).delete("/api/reviews/2").expect(200);
+    });
+    it("400: bad request when review id is not a number", () => {
+      return request(app)
+        .delete("/api/reviews/NAN")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "bad request" });
+        });
+    });
+    it("404: review not found when review id is not found", () => {
+      return request(app)
+        .delete("/api/reviews/10000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "review not found" });
+        });
+    });
+  });
 });

@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const format = require("pg-format");
 const {
   selectFromReviewsJoinComments,
   updateVotes,
@@ -7,6 +6,7 @@ const {
   validSortParams,
   insertIntoTable,
   countReviews,
+  deleteFromTableWhere,
 } = require("./utils");
 
 exports.getReviewById = async (review_id) => {
@@ -106,4 +106,20 @@ exports.addReview = async (reqBody) => {
   );
 
   return review;
+};
+
+exports.deleteReview = async (review_id) => {
+  console.log(review_id);
+  if (!/[0-9]+/.test(review_id)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+  const deleted = await deleteFromTableWhere(
+    db,
+    "reviews",
+    "review_id",
+    +review_id
+  );
+  if (deleted.length === 0) {
+    return Promise.reject({ status: 404, msg: "review not found" });
+  }
 };

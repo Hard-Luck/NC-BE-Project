@@ -4,17 +4,31 @@ const {
   selectAllFromTableWhere,
   deleteFromTableWhere,
   updateVotes,
+  countComments,
 } = require("./utils");
 
-exports.getCommentsForReview = async (review_id) => {
-  if (typeof +review_id !== "number") {
-    return Promise.reject({ status: 400, message: "bad request" });
+exports.getCommentsForReview = async (review_id, { p = 1, limit = 10 }) => {
+  if (
+    !/^[0-9]+$/.test(review_id) ||
+    !/^[0-9]+$/.test(p) ||
+    !/^[0-9]+$/.test(limit)
+  ) {
+    return Promise.reject({ status: 400, msg: "bad request" });
   }
+  const totalComments = await countComments(db, review_id);
+  const offset = (p - 1) * limit;
+  const maxPage = Math.ceil(totalComments / limit);
+  if (+p > maxPage && maxPage > 0) {
+    return Promise.reject({ status: 404, msg: "page not found" });
+  }
+
   const comments = await selectAllFromTableWhere(
     db,
     "comments",
     "review_id",
-    review_id
+    review_id,
+    limit,
+    offset
   );
   if (comments.length > 0) return comments;
 
@@ -53,7 +67,7 @@ exports.addCommentToReview = async (review_id, { username, body }) => {
 };
 
 exports.removeCommentByID = async (comment_id) => {
-  if (typeof +comment_id !== "number") {
+  if (!/[0-9]+/.test(comment_id)) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
   const deleted = await deleteFromTableWhere(

@@ -348,6 +348,34 @@ describe("NC_Games API", () => {
           expect(body).toEqual({ msg: "review not found" });
         });
     });
+    it("404: when page is not in bound", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?p=10000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "page not found" });
+        });
+    });
+    it("400: when page is not a positive integer", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?p=3.14159")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            msg: "bad request",
+          });
+        });
+    });
+    it("400: when limit is not a positive integer", () => {
+      return request(app)
+        .get("/api/reviews/2/comments?limit=1.1")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            msg: "bad request",
+          });
+        });
+    });
   });
   describe("POST /api/reviews/:review_id/comments", () => {
     it("201: adds comment to a review", () => {

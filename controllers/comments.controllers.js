@@ -7,7 +7,10 @@ const {
 
 exports.getComments = async (req, res, next) => {
   try {
-    const comments = await getCommentsForReview(req.params.review_id);
+    const comments = await getCommentsForReview(
+      req.params.review_id,
+      req.query
+    );
     res.status(200).send({ comments });
   } catch (err) {
     next(err);

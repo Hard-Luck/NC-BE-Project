@@ -7,9 +7,11 @@ exports.selectAllFromTableWhere = async (
   database,
   table,
   column_name,
-  valueToMatch
+  valueToMatch,
+  limit,
+  offset
 ) => {
-  query = format(
+  let query = format(
     `
     SELECT * 
     FROM
@@ -21,7 +23,13 @@ exports.selectAllFromTableWhere = async (
     column_name,
     [valueToMatch]
   );
-  const { rows } = await database.query(query);
+  let limitQuery = ` LIMIT $1 OFFSET $2`;
+  const queryParams = [];
+  if (limit && offset) {
+    query += limitQuery;
+    queryParams.push(limit, offset);
+  }
+  const { rows } = await database.query(query, queryParams);
   return rows;
 };
 
@@ -160,5 +168,11 @@ exports.countReviews = async (database, category) => {
   }
 
   const { rowCount } = await database.query(query);
+  return rowCount;
+};
+
+exports.countComments = async (database, review_id) => {
+  query = `SELECT * from comments where review_id = $1`;
+  const { rowCount } = await database.query(query, [review_id]);
   return rowCount;
 };

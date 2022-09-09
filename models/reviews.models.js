@@ -109,7 +109,6 @@ exports.addReview = async (reqBody) => {
 };
 
 exports.deleteReview = async (review_id) => {
-  console.log(review_id);
   if (!/[0-9]+/.test(review_id)) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }

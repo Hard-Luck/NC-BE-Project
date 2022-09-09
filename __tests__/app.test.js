@@ -645,7 +645,7 @@ describe("NC_Games API", () => {
         });
     });
   });
-  describe.only("DELETE /api/reviews/:review_id", () => {
+  describe("DELETE /api/reviews/:review_id", () => {
     it("200 deletes a review and responds with an empty body", () => {
       return request(app).delete("/api/reviews/2").expect(200);
     });

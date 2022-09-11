@@ -187,7 +187,7 @@ describe("PATCH /api/reviews/:review_id", () => {
         .get("/api/reviews?p=3.14159")
         .expect(400);
       expect(body).toEqual({
-        msg: "p and limit must be a positive integer",
+        msg: "p and limit must be positive integers",
       });
     });
     it("400: when limit is not a positive integer", async () => {

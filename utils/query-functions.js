@@ -12,13 +12,7 @@ exports.selectAllFromTableWhere = async (
   offset
 ) => {
   let query = format(
-    `
-    SELECT * 
-    FROM
-        %1$I
-    WHERE
-        %2$I = %L
-        `,
+    `SELECT * FROM %1$I WHERE %2$I = %L `,
     table,
     column_name,
     [valueToMatch]
@@ -52,11 +46,7 @@ exports.insertIntoTable = async (database, table, column_names, values) => {
 
 exports.deleteFromTableWhere = async (database, table, column_name, value) => {
   const query = format(
-    `
-    DELETE FROM %1$I
-    WHERE
-        %2$I = %3$L
-    RETURNING *;`,
+    `DELETE FROM %1$I WHERE %2$I = %3$L RETURNING *;`,
     table,
     column_name,
     [value]

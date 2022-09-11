@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { selectAllFromTableWhere } = require("./db-utils");
+const { selectAllFromTableWhere } = require("../utils/query-functions");
 exports.getAllUsers = async () => {
   const { rows } = await db.query("SELECT * FROM users");
   return rows;

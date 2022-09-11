@@ -1,3 +1,4 @@
+const { isANumber, isPositiveInteger } = require("../utils/validation");
 const db = require("../db/connection");
 const {
   selectFromReviewsJoinComments,
@@ -7,7 +8,7 @@ const {
   insertIntoTable,
   countReviews,
   deleteFromTableWhere,
-} = require("./db-utils");
+} = require("../utils/query-functions");
 
 exports.getReviewById = async (review_id) => {
   const result = await selectFromReviewsJoinComments(
@@ -50,17 +51,14 @@ exports.getAllReviews = async ({
   if (!["DESC", "ASC"].includes(order.toUpperCase())) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
-  if (typeof +p !== "number" || typeof +limit !== "number") {
-    return Promise.reject({ status: 400, msg: "bad request" });
+  if (!(isPositiveInteger(p) && isPositiveInteger(limit))) {
+    return Promise.reject({
+      status: 400,
+      msg: "p and limit must be positive integers",
+    });
   }
   if (sort_by !== "comment_count") {
     sort_by = `reviews.${sort_by}`;
-  }
-  if (((p || +limit) && +p % 1 !== 0) || +limit % 1 !== 0) {
-    return Promise.reject({
-      status: 400,
-      msg: "p and limit must be a positive integer",
-    });
   }
   const total = await countReviews(db, category);
   const offset = limit * (p - 1);
@@ -109,7 +107,7 @@ exports.addReview = async (reqBody) => {
 };
 
 exports.deleteReview = async (review_id) => {
-  if (!/[0-9]+/.test(review_id)) {
+  if (!isANumber(review_id)) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
   const deleted = await deleteFromTableWhere(

@@ -7,7 +7,7 @@ const {
   deleteFromTableWhere,
   updateVotes,
   selectFromReviewsJoinComments,
-} = require("../models/db-utils");
+} = require("../utils/query-functions");
 
 beforeAll(() => seed(testData));
 afterAll(() => db.end());

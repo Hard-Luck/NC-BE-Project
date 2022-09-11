@@ -5,14 +5,11 @@ const {
   deleteFromTableWhere,
   updateVotes,
   countComments,
-} = require("./db-utils");
+} = require("../utils/query-functions");
+const { isANumber } = require("../utils/validation");
 
 exports.getCommentsForReview = async (review_id, { p = 1, limit = 10 }) => {
-  if (
-    !/^[0-9]+$/.test(review_id) ||
-    !/^[0-9]+$/.test(p) ||
-    !/^[0-9]+$/.test(limit)
-  ) {
+  if (!(isANumber(review_id) && isANumber(p) && isANumber(limit))) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
   const totalComments = await countComments(db, review_id);
@@ -67,7 +64,7 @@ exports.addCommentToReview = async (review_id, { username, body }) => {
 };
 
 exports.removeCommentByID = async (comment_id) => {
-  if (!/[0-9]+/.test(comment_id)) {
+  if (!isANumber(comment_id)) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
   const deleted = await deleteFromTableWhere(

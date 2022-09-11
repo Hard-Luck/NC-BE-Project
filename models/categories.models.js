@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { insertIntoTable } = require("./db-utils");
+const { insertIntoTable } = require("../utils/query-functions");
 
 exports.getAllCategories = async () => {
   const { rows } = await db.query(`SELECT * FROM categories`);

@@ -164,6 +164,9 @@
       }
     }
   },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes comment matching the comment id"
+  },
   "GET /api/users": {
     "description": "serves a list of all users",
     "exampleResponse": {

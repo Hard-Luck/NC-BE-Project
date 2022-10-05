@@ -24,7 +24,7 @@ exports.getReviews = async (req, res, next) => {
   }
 };
 
-exports.patchReview = async (req, res, next) => {
+exports.patchReviewVotes = async (req, res, next) => {
   try {
     const review = await updateVotes(req.params.review_id, req.body.inc_votes);
     res.status(200).send({ review });
@@ -32,6 +32,8 @@ exports.patchReview = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.patchReviewBody = async (req, res, next) => {};
 
 exports.postReview = async (req, res, next) => {
   try {

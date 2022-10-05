@@ -1,5 +1,6 @@
 const {
   updateVotes,
+  updateReviewBody,
   getReviewById,
   getAllReviews,
   addReview,
@@ -33,7 +34,17 @@ exports.patchReviewVotes = async (req, res, next) => {
   }
 };
 
-exports.patchReviewBody = async (req, res, next) => {};
+exports.patchReviewBody = async (req, res, next) => {
+  try {
+    const review = await updateReviewBody(
+      req.params.review_id,
+      req.body.review_body
+    );
+    res.status(200).send({ review });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.postReview = async (req, res, next) => {
   try {

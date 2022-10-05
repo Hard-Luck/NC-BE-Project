@@ -166,3 +166,28 @@ exports.countComments = async (database, review_id) => {
   const { rowCount } = await database.query(query, [review_id]);
   return rowCount;
 };
+
+exports.updateReviewBody = async (
+  database,
+  table,
+  body,
+  columnName,
+  matchingValue
+) => {
+  query = format(
+    `           
+    UPDATE %1$I 
+    SET 
+     review_body = %2$L 
+    WHERE 
+       %3$I = %4$L
+    RETURNING *;
+    `,
+    table,
+    body,
+    columnName,
+    matchingValue
+  );
+  const { rows } = await database.query(query);
+  return rows;
+};

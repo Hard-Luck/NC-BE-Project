@@ -105,6 +105,51 @@ describe("PATCH /api/reviews/:review_id", () => {
       .expect(404);
     expect(body).toEqual({ msg: "review not found" });
   });
+  describe("patch review body", () => {
+    it("changes review body and returns new review", async () => {
+      const reqBody = { review_body: "new review body" };
+      const { body } = await request(app)
+        .patch("/api/reviews/1/edit")
+        .send(reqBody)
+        .expect(200);
+      expect(body.review).toEqual({
+        review_id: 1,
+        title: "Agricola",
+        designer: "Uwe Rosenberg",
+        owner: "mallionaire",
+        review_img_url:
+          "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        review_body: "new review body",
+        category: "euro game",
+        created_at: "2021-01-18T10:00:20.514Z",
+        votes: 1,
+      });
+    });
+    it("400: bad request, when review id is invalid", async () => {
+      const reqBody = { review_body: "new review body" };
+      const { body } = await request(app)
+        .patch("/api/reviews/invalid/edit")
+        .send(reqBody)
+        .expect(400);
+      expect(body).toEqual({ msg: "bad request" });
+    });
+    it("400: bad request when request body is incorrect", async () => {
+      const reqBody = { invalid: "new review body" };
+      const { body } = await request(app)
+        .patch("/api/reviews/1/edit")
+        .send(reqBody)
+        .expect(400);
+      expect(body).toEqual({ msg: "bad request" });
+    });
+    it("404: when review doesnt exist", async () => {
+      const reqBody = { invalid: "new review body" };
+      const { body } = await request(app)
+        .patch("/api/reviews/12345/edit")
+        .send(reqBody)
+        .expect(404);
+      expect(body).toEqual({ msg: "review not found" });
+    });
+  });
   describe("GET /api/users", () => {
     it("200: Returns all category objects with username, name and avatar_url", async () => {
       const { body } = await request(app).get("/api/users").expect(200);

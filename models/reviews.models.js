@@ -8,6 +8,7 @@ const {
   insertIntoTable,
   countReviews,
   deleteFromTableWhere,
+  updateReviewBody,
 } = require("../utils/query-functions");
 
 exports.getReviewById = async (review_id) => {
@@ -27,6 +28,19 @@ exports.updateVotes = async (review_id, votes) => {
     db,
     "reviews",
     +votes,
+    "review_id",
+    review_id
+  );
+  if (updatedReview.length === 0) {
+    return Promise.reject({ status: 404, msg: "review not found" });
+  }
+  return updatedReview[0];
+};
+exports.updateReviewBody = async (review_id, body) => {
+  const updatedReview = await updateReviewBody(
+    db,
+    "reviews",
+    body,
     "review_id",
     review_id
   );

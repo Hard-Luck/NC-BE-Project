@@ -14,7 +14,7 @@ const config =
         },
       }
     : {};
-if (!process.env.PGDATABASE) {
+if (!ENV === "production" && !process.env.PGDATABASE) {
   throw new Error("PGDATABASE not set");
 }
 module.exports = new Pool(config);

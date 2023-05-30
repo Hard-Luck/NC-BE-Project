@@ -1,32 +1,79 @@
-## Summary
+# NC Games Backend API
 
-Project for Northcoders Backend Week 3.
+This project serves as the backend API for the NC Games application, which provides features for tracking game reviews, comments, and likes or dislikes on those comments. It was developed during my participation in the Northcoders bootcamp.
 
-Hosted on Heroku
-Found: https://nc-be-project-nc-games.herokuapp.com/api
+The API is hosted on Heroku and can be accessed at [NC Games API](https://nc-be-project-nc-games.herokuapp.com/api)
 
-An api used to review board games and comment on the reviews. All endpoints serve json responses and detailed instruction of how to use the endpoints can be found in endpoints.json.
+## Technologies Used
 
-### Cloning the repository
+- Node.js
+- Express.js
+- PostgreSQL
+- Jest
+- Supertest
 
-#### Minimum requirements:
+## API Documentation
 
-- node version 16.16.0 or later
-- psql 12.12 or later
+All endpoints serve JSON responses. Detailed instructions on how to use the endpoints can be found in the `endpoints.json` file. Here is an example:
 
-fork the repository and then run npm i to install all the dependencies listed in the package.json
+```json
+"GET /api/categories": {
+  "description": "serves an array of all categories",
+  "queries": [],
+  "exampleResponse": {
+    "categories": [
+      {
+        "description": "Players attempt to uncover each other's hidden role",
+        "slug": "Social deduction"
+      }
+    ]
+  }
+},
+```
 
-### Initialising the databases
+## Error Handling
 
-run: "npm run setup-dbs" from the command line to set up the postgreSQL databases
-then run "npm run seed" to add the data to the databases
+The API is set up to provide generic error messages to protect the database but does give useful HTTP status codes to indicate the nature of the error:
 
-### Connecting to local Database
+- `400` for user errors
+- `404` when the requested resource could not be found
+- `500` when there is a server error
 
-To connect to your own database locally, create ".env.development" and ".env.test" in the root folder of this project, these files should contain PGDATABASE=<nc_games> and PGDATABASE=<nc_games_test> respectively as seen in "env-example".
+It also provides appropriate `200` level status codes for successful requests.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js v16.16.0 or later
+- PostgreSQL 12.12 or later
+
+### Installation
+
+1. Fork the repository.
+2. Run `npm install` to install all the dependencies listed in the `package.json`.
+
+### Initialising the Databases
+
+1. Run `npm run setup-dbs` to set up the PostgreSQL databases.
+2. Run `npm run seed` to populate the databases with data.
+
+### Connecting to Local Database
+
+To connect to your own database locally, create `.env.development` and `.env.test` files in the root folder of this project. These files should contain `PGDATABASE=<nc_games>` and `PGDATABASE=<nc_games_test>` respectively. Refer to the `env-example` file for a template.
 
 ### Testing
 
-run: "npm t" to test using jest
+Run `npm test` to execute the tests using Jest. To start the local server, run `npm run dev`.
 
-to run server locally run "npm run dev"
+## Contributing
+
+If you wish to contribute, you can make a pull request or drop a comment.
+
+## Versioning
+
+This is version 1.0 of the NC Games Backend API.
+
+## License
+
+This project is fully open-source and is available under the [MIT License](LICENSE).
